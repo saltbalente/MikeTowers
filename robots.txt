@@ -1,0 +1,41 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://servicios-espirituales.com/sitemap.xml
+
+# Allow all search engines to crawl
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Disallow admin areas (if any)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.json$
+Disallow: /sw.js
+
+# Allow important files for SEO
+Allow: /manifest.json
+Allow: /styles.css
+Allow: /app.js
+Allow: /*.webp$
+Allow: /*.jpg$
+Allow: /*.png$
+
+# Priority pages for crawling
+# Main landing page
+# Services section
+# Contact section
+# Locations section
