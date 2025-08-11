@@ -287,15 +287,33 @@
 <body>
     <!-- Navigation -->
     <nav id="navbar" style="position: fixed; top: 0; width: 100%; background: rgba(31, 41, 55, 0.95); backdrop-filter: blur(10px); z-index: 50; padding: 1rem 0; transition: all 0.3s ease;">
-        <div class="container" style="display: flex;justify-content: space-between;align-items: center;flex-direction: column;">
+        <div class="container" style="display: flex;justify-content: space-between;align-items: center;">
             <div style="color: #F59E0B; font-weight: 700; font-size: 1.5rem;">✨ Servicios Espirituales</div>
-            <div style="display: flex; gap: 2rem;">
+            
+            <!-- Desktop Menu -->
+            <div class="desktop-menu" style="display: flex; gap: 2rem;">
                 <a href="#servicios" style="color: #FFFFFF; text-decoration: none; transition: color 0.3s ease;">Servicios</a>
                 <a href="#testimonios" style="color: #FFFFFF; text-decoration: none; transition: color 0.3s ease;">Testimonios</a>
                 <a href="#galeria" style="color: #FFFFFF; text-decoration: none; transition: color 0.3s ease;">Galería</a>
                 <a href="#ubicaciones" style="color: #FFFFFF; text-decoration: none; transition: color 0.3s ease;">Ubicaciones</a>
                 <a href="#contacto" style="color: #FFFFFF; text-decoration: none; transition: color 0.3s ease;">Contacto</a>
             </div>
+            
+            <!-- Mobile Hamburger Button -->
+            <button id="hamburger-btn" class="hamburger-btn" aria-label="Abrir menú de navegación">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu">
+            <a href="#servicios" class="mobile-menu-link">Servicios</a>
+            <a href="#testimonios" class="mobile-menu-link">Testimonios</a>
+            <a href="#galeria" class="mobile-menu-link">Galería</a>
+            <a href="#ubicaciones" class="mobile-menu-link">Ubicaciones</a>
+            <a href="#contacto" class="mobile-menu-link">Contacto</a>
         </div>
     </nav>
 

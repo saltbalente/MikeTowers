@@ -188,56 +188,38 @@ function loadLocationsSection() {
     if (!locationsGrid) return;
     
     const locations = [
-        {
-            city: 'Los Angeles',
-            state: 'California',
-            address: '1247 E Olympic Blvd, Los Angeles, CA 90021',
-            services: 'Amarres de amor, limpias espirituales, lectura de cartas',
-            icon: '🌴'
-        },
-        {
-            city: 'Miami',
-            state: 'Florida',
-            address: '3456 SW 8th St, Miami, FL 33135',
-            services: 'Brujería, curanderos, magia para enamorar',
-            icon: '🏖️'
-        },
-        {
-            city: 'Houston',
-            state: 'Texas',
-            address: '2789 Navigation Blvd, Houston, TX 77003',
-            services: 'Brujos de Catemaco, hechizos, consultas amorosas',
-            icon: '🤠'
-        },
-        {
-            city: 'Phoenix',
-            state: 'Arizona',
-            address: '1567 S Central Ave, Phoenix, AZ 85004',
-            services: 'Chamanes, espiritistas, magia negra',
-            icon: '🌵'
-        },
-        {
-            city: 'New York',
-            state: 'New York',
-            address: '456 E 116th St, New York, NY 10029',
-            services: 'Brujos en Guatemala, amarres y amor, psíquicos',
-            icon: '🗽'
-        }
+        { city: 'Los Angeles', state: 'California', size: 'large' },
+        { city: 'Miami', state: 'Florida', size: 'medium' },
+        { city: 'Houston', state: 'Texas', size: 'large' },
+        { city: 'Phoenix', state: 'Arizona', size: 'small' },
+        { city: 'New York', state: 'New York', size: 'extra-large' },
+        { city: 'California', state: '', size: 'medium' },
+        { city: 'Florida', state: '', size: 'small' },
+        { city: 'Texas', state: '', size: 'medium' },
+        { city: 'Arizona', state: '', size: 'small' }
     ];
     
-    locationsGrid.className = 'locations-grid';
-    locationsGrid.innerHTML = locations.map(location => `
-        <div class="location-card fade-in-up">
-            <div class="location-icon">${location.icon}</div>
-            <h3 class="location-city">${location.city}</h3>
-            <p class="location-state">${location.state}</p>
-            <p class="location-address">${location.address}</p>
-            <p class="location-services">${location.services}</p>
-            <button class="location-cta" onclick="sendWhatsApp('Cliente de ${location.city}', 'Consulta Local', 'Hola, estoy en ${location.city}, ${location.state}. ¿Tienen servicios disponibles en mi área?')">
-                Contactar en ${location.city}
+    locationsGrid.className = 'word-cloud-container';
+    locationsGrid.innerHTML = `
+        <div class="word-cloud">
+            ${locations.map((location, index) => {
+                const word = location.state ? `${location.city} ${location.state}` : location.city;
+                const delay = Math.random() * 2;
+                return `
+                    <span class="cloud-word ${location.size}" 
+                          style="animation-delay: ${delay}s;"
+                          onclick="sendWhatsApp('Cliente interesado', 'Consulta Local', 'Hola, estoy interesado en sus servicios en ${word}. ¿Tienen disponibilidad?')">
+                        ${word}
+                    </span>
+                `;
+            }).join('')}
+        </div>
+        <div class="locations-cta">
+            <button class="main-location-cta" onclick="sendWhatsApp('Cliente', 'Consulta General', 'Hola, me gustaría saber más sobre sus servicios espirituales. ¿Pueden ayudarme?')">
+                Contactar Ahora 💬
             </button>
         </div>
-    `).join('');
+    `;
 }
 
 // Load Contact Form
@@ -320,7 +302,7 @@ function loadFAQSection() {
 
 // WhatsApp Functions
 function sendWhatsApp(name, service, message) {
-    const phone = "14084443112";
+    const phone = "14133912149";
     const text = `Hola, soy ${name}. Estoy interesado en ${service}. ${message}`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
     
@@ -429,6 +411,9 @@ function initializeScrollEffects() {
 function initializeNavigation() {
     const navbar = document.getElementById('navbar');
     const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
     
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
@@ -438,6 +423,52 @@ function initializeNavigation() {
             navbar.style.background = 'rgba(31, 41, 55, 0.95)';
         }
     });
+    
+    // Hamburger menu toggle
+    if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.addEventListener('click', function() {
+            const isActive = hamburgerBtn.classList.contains('active');
+            
+            if (isActive) {
+                // Close menu
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
+            } else {
+                // Open menu
+                hamburgerBtn.classList.add('active');
+                mobileMenu.classList.add('active');
+                hamburgerBtn.setAttribute('aria-label', 'Cerrar menú de navegación');
+            }
+        });
+        
+        // Close mobile menu when clicking on a link
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!navbar.contains(e.target) && mobileMenu.classList.contains('active')) {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
+            }
+        });
+        
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
+            }
+        });
+    }
     
     // Smooth scrolling for navigation links
     navLinks.forEach(link => {
