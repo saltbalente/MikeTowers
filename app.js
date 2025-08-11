@@ -117,7 +117,7 @@ function loadTestimonialsSection() {
                 <div class="testimonial-author">
                     <div class="testimonial-avatar">${testimonial.initial}</div>
                     <div class="testimonial-info">
-                        <h4>${testimonial.author}</h4>
+                        <h3>${testimonial.author}</h3>
                         <p>${testimonial.location} - ${testimonial.service}</p>
                     </div>
                 </div>
@@ -170,7 +170,7 @@ function loadGallerySection() {
             <div class="gallery-image-container">
                 <img src="${image.src}" alt="${image.alt}" class="gallery-image lazy-load" loading="lazy" decoding="async">
                 <div class="gallery-overlay">
-                    <h4 class="gallery-title">${image.title}</h4>
+                    <h3 class="gallery-title">${image.title}</h3>
                     <p class="gallery-description">${image.description}</p>
                     <button class="gallery-cta" onclick="sendWhatsApp('Cliente Interesado en Rituales', 'Consulta sobre ${image.title}', 'Hola, vi la imagen de ${image.title} en su galería. ¿Pueden darme más información sobre este tipo de ritual?')">
                         Consultar este Ritual
