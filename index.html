@@ -40,7 +40,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Preload Critical Resources -->
+    <!-- Preload critical resources -->
+    <!-- LCP Image Optimization: Preload hero background image with high priority -->
+    <link rel="preload" href="https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=spiritual%20altar%20with%20red%20candles%20crystals%20tarot%20cards%20mystical%20atmosphere%20warm%20golden%20lighting%20realistic%20photography%20love%20ritual%20setup&image_size=landscape_16_9" as="image" type="image/webp" fetchpriority="high">
     <link rel="preload" href="https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=mystical%20spiritual%20candles%20crystals%20love%20ritual%20purple%20golden%20background%20realistic%20photography&image_size=landscape_16_9" as="image" type="image/webp">
     
     <!-- Critical CSS Inline -->
@@ -333,7 +335,9 @@
                 <img src="https://trae-api-us.mchost.guru/api/ide/v1/text_to_image?prompt=Sacred%20altar%20with%20Virgin%20of%20Guadalupe%20statue%2C%20surrounded%20by%20red%20and%20white%20candles%2C%20mystical%20spiritual%20atmosphere%2C%20warm%20golden%20lighting%2C%20religious%20devotion%2C%20Mexican%20Catholic%20tradition%2C%20peaceful%20sacred%20space&image_size=landscape_4_3" 
                      alt="Altar sagrado con la Virgen de Guadalupe rodeada de velas rojas y blancas para rituales espirituales de amor" 
                      title="Altar Espiritual con Virgen de Guadalupe - Servicios de Amarres de Amor Efectivos" 
-                     loading="lazy" 
+                     fetchpriority="high"
+                     width="800"
+                     height="600"
                      class="services-altar-image">
             </div>
             <h2 class="section-title">Servicios Espirituales Efectivos</h2>
