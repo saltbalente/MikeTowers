@@ -1,5 +1,50 @@
 /* Non-critical CSS - Loaded asynchronously */
 
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Prevenir CLS durante carga de fuentes */
+html {
+    font-display: swap;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    /* Prevenir CLS con altura mínima */
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    text-align: center;
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+    min-height: 600px; /* Previene CLS estableciendo altura mínima */
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+    /* Prevenir CLS con dimensiones estables */
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Services Section */
 .services-section {
     padding: 80px 0;
@@ -827,6 +872,11 @@ section#testimonios h2 {
     margin: 2rem 0;
     position: relative;
     padding-bottom: 15px;
+    /* Prevenir CLS con dimensiones estables */
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .brujos-ubicaciones-image::after {
@@ -842,11 +892,15 @@ section#testimonios h2 {
 }
 
 .brujos-realista-image {
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Prevenir CLS con aspect-ratio */
+    aspect-ratio: 3/2;
+    object-fit: cover;
+    display: block;
 }
 
 .brujos-realista-image:hover {
@@ -963,6 +1017,11 @@ section#testimonios h2 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     font-size: 1.1rem;
+    /* Prevenir CLS con dimensiones estables */
+    min-height: 60px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
 }
 
 .mobile-menu-link:hover {
