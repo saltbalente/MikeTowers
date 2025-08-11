@@ -16,7 +16,6 @@ function initializeApp() {
     loadFAQSection();
     initializeLazyLoading();
     initializeScrollEffects();
-    initializeNavigation();
     initializePerformanceOptimizations();
 }
 
@@ -407,84 +406,7 @@ function initializeScrollEffects() {
     }
 }
 
-// Navigation
-function initializeNavigation() {
-    const navbar = document.getElementById('navbar');
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
-    
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            navbar.style.background = 'rgba(31, 41, 55, 0.98)';
-        } else {
-            navbar.style.background = 'rgba(31, 41, 55, 0.95)';
-        }
-    });
-    
-    // Hamburger menu toggle
-    if (hamburgerBtn && mobileMenu) {
-        hamburgerBtn.addEventListener('click', function() {
-            const isActive = hamburgerBtn.classList.contains('active');
-            
-            if (isActive) {
-                // Close menu
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
-            } else {
-                // Open menu
-                hamburgerBtn.classList.add('active');
-                mobileMenu.classList.add('active');
-                hamburgerBtn.setAttribute('aria-label', 'Cerrar menú de navegación');
-            }
-        });
-        
-        // Close mobile menu when clicking on a link
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
-            });
-        });
-        
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!navbar.contains(e.target) && mobileMenu.classList.contains('active')) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
-            }
-        });
-        
-        // Close mobile menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-label', 'Abrir menú de navegación');
-            }
-        });
-    }
-    
-    // Smooth scrolling for navigation links
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const offsetTop = target.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
+
 
 // Performance Optimizations
 function initializePerformanceOptimizations() {
