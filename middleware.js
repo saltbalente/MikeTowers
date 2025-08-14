@@ -1,6 +1,13 @@
 // middleware.js
 // Edge Function compatible middleware
 
+export const config = {
+  runtime: 'edge',
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)",
+  ],
+};
+
 const PROXYCHECK_API_KEY = process.env.PROXYCHECK_API_KEY || "7w48yx-406284-067674-wi3016";
 
 // Cache en memoria para reducir llamadas DNS y API
@@ -207,9 +214,3 @@ export async function middleware(request) {
     return;
   }
 }
-
-export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)",
-  ],
-};
