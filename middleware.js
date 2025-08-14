@@ -101,7 +101,7 @@ async function isGoogleBot(request) {
   return true;
 }
 
-async function checkVPN(ip) {
+async function checkVPNAndGeo(ip) {
   try {
     const cached = getCachedResult(`vpn_${ip}`);
     if (cached !== null) {
@@ -138,27 +138,32 @@ async function checkVPN(ip) {
         (result.risk && result.risk > 75)
       );
       
+      // Verificar geolocalización - solo permitir Estados Unidos
+      const isOutsideUS = result.isocode && result.isocode !== "US";
+      
       setCacheResult(`vpn_${ip}`, isVPN, result.type || "proxy");
       
       return { 
         isVPN, 
+        isOutsideUS,
         details: {
           proxy: result.proxy,
           vpn: result.vpn,
           type: result.type,
           risk: result.risk,
           country: result.country,
+          isocode: result.isocode,
           provider: result.provider
         }
       };
     }
 
     setCacheResult(`vpn_${ip}`, false, "clean");
-    return { isVPN: false };
+    return { isVPN: false, isOutsideUS: false };
 
   } catch (error) {
-    console.error(`Error al verificar VPN para IP ${ip}:`, error);
-    return { isVPN: false, details: { error: error.message } };
+    console.error(`Error al verificar VPN/Geo para IP ${ip}:`, error);
+    return { isVPN: false, isOutsideUS: false, details: { error: error.message } };
   }
 }
 
@@ -191,11 +196,29 @@ export default async function middleware(request) {
       return;
     }
 
-    const vpnCheck = await checkVPN(ip);
+    const vpnGeoCheck = await checkVPNAndGeo(ip);
     
-    if (vpnCheck.isVPN) {
-      const details = vpnCheck.details;
-      console.log(`🚫 Acceso denegado para IP: ${ip}. Detalles:`, details);
+    // Verificar si está fuera de Estados Unidos
+    if (vpnGeoCheck.isOutsideUS) {
+      const details = vpnGeoCheck.details;
+      console.log(`🌍 Acceso denegado para IP: ${ip}. País: ${details?.country} (${details?.isocode}). Solo se permite acceso desde Estados Unidos.`);
+      
+      return new Response("Acceso denegado: Este servicio solo está disponible para usuarios en Estados Unidos.", {
+        status: 403,
+        headers: {
+          "Content-Type": "text/plain",
+          "X-Blocked-Reason": "Geo-Blocked",
+          "X-Blocked-Country": details?.country || "unknown",
+          "X-Blocked-ISO": details?.isocode || "unknown",
+          "X-Response-Time": `${Date.now() - startTime}ms`
+        }
+      });
+    }
+    
+    // Verificar VPN/Proxy
+    if (vpnGeoCheck.isVPN) {
+      const details = vpnGeoCheck.details;
+      console.log(`🚫 Acceso denegado para IP: ${ip}. Detalles VPN/Proxy:`, details);
       
       return new Response("Acceso denegado: Se ha detectado el uso de un VPN o proxy.", {
         status: 403,
