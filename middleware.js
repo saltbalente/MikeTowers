@@ -1,6 +1,5 @@
 // middleware.js
-import { NextResponse } from "next/server";
-import dns from "dns/promises";
+// Edge Function compatible middleware
 
 const PROXYCHECK_API_KEY = process.env.PROXYCHECK_API_KEY || "7w48yx-406284-067674-wi3016";
 
@@ -81,29 +80,18 @@ function setCacheResult(key, result, type) {
   }
 }
 
-async function isGoogleBot(ip) {
-  try {
-    const cached = getCachedResult(`googlebot_${ip}`);
-    if (cached !== null) {
-      return cached.result;
-    }
-
-    const reverse = await dns.reverse(ip);
-    const hostname = reverse[0];
-
-    if (hostname && (hostname.endsWith(".googlebot.com") || hostname.endsWith(".google.com"))) {
-      const forward = await dns.resolve(hostname);
-      const isValidBot = forward.includes(ip);
-      
-      setCacheResult(`googlebot_${ip}`, isValidBot, "googlebot");
-      return isValidBot;
-    }
-  } catch (error) {
-    console.error(`Error de DNS al verificar Googlebot para IP: ${ip}`, error);
+async function isGoogleBot(request) {
+  // Check User-Agent for Googlebot
+  const userAgent = request.headers.get("user-agent") || "";
+  const isGoogleBotUA = userAgent.toLowerCase().includes("googlebot");
+  
+  if (!isGoogleBotUA) {
+    return false;
   }
   
-  setCacheResult(`googlebot_${ip}`, false, "unknown");
-  return false;
+  // Additional verification could be done here with external API if needed
+  // For now, we'll trust the User-Agent for Edge Function compatibility
+  return true;
 }
 
 async function checkVPN(ip) {
@@ -174,7 +162,7 @@ export async function middleware(request) {
 
   if (!ip) {
     console.warn("No se pudo obtener la IP del usuario. Acceso denegado por seguridad.");
-    return new NextResponse("Error: No se pudo verificar la dirección IP", {
+    return new Response("Error: No se pudo verificar la dirección IP", {
       status: 400,
       headers: {
         "X-Blocked-Reason": "IP-Not-Detected"
@@ -184,14 +172,14 @@ export async function middleware(request) {
 
   if (isLocalIP(ip)) {
     console.log(`Permitido: IP local/privada detectada: ${ip}`);
-    return NextResponse.next();
+    return;
   }
 
   try {
-    const isBot = await isGoogleBot(ip);
+    const isBot = await isGoogleBot(request);
     if (isBot) {
       console.log(`✅ Permitido: Googlebot verificado para IP: ${ip} (${Date.now() - startTime}ms)`);
-      return NextResponse.next();
+      return;
     }
 
     const vpnCheck = await checkVPN(ip);
@@ -200,7 +188,7 @@ export async function middleware(request) {
       const details = vpnCheck.details;
       console.log(`🚫 Acceso denegado para IP: ${ip}. Detalles:`, details);
       
-      return new NextResponse("Acceso denegado: Se ha detectado el uso de un VPN o proxy.", {
+      return new Response("Acceso denegado: Se ha detectado el uso de un VPN o proxy.", {
         status: 403,
         headers: {
           "Content-Type": "text/plain",
@@ -212,11 +200,11 @@ export async function middleware(request) {
     }
 
     console.log(`✅ Acceso permitido para IP: ${ip} (${Date.now() - startTime}ms)`);
-    return NextResponse.next();
+    return;
 
   } catch (error) {
     console.error(`Error general en middleware para IP ${ip}:`, error);
-    return NextResponse.next();
+    return;
   }
 }
 
