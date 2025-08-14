@@ -1,0 +1,11 @@
+{
+  "name": "miketowers",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "mkdir -p public && cp -r *.html *.css *.js *.json *.txt *.xml images public/ 2>/dev/null || true"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
