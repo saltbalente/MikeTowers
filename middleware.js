@@ -88,17 +88,35 @@ function setCacheResult(key, result, type) {
 }
 
 async function isGoogleBot(request) {
-  // Check User-Agent for Googlebot
+  // Check User-Agent for ALL Google bots including Ads
   const userAgent = request.headers.get("user-agent") || "";
-  const isGoogleBotUA = userAgent.toLowerCase().includes("googlebot");
+  const lowerUA = userAgent.toLowerCase();
   
-  if (!isGoogleBotUA) {
-    return false;
+  // Lista completa de bots de Google para evitar cloaking
+  const googleBots = [
+    'googlebot',
+    'adsbot-google',
+    'google-ads',
+    'googlebot-image',
+    'googlebot-news',
+    'googlebot-video',
+    'google-structured-data-testing-tool',
+    'google-site-verification',
+    'google-read-aloud',
+    'feedfetcher-google',
+    'google-favicon',
+    'google-web-preview',
+    'google-adwords-instant'
+  ];
+  
+  const isGoogleBot = googleBots.some(bot => lowerUA.includes(bot));
+  
+  if (isGoogleBot) {
+    console.log(`🤖 Bot de Google detectado: ${userAgent}`);
+    return true;
   }
   
-  // Additional verification could be done here with external API if needed
-  // For now, we'll trust the User-Agent for Edge Function compatibility
-  return true;
+  return false;
 }
 
 async function checkVPNAndGeo(ip) {
@@ -185,23 +203,28 @@ export default async function middleware(request) {
   }
 
   if (isLocalIP(ip)) {
-    console.log(`Permitido: IP local/privada detectada: ${ip}`);
+    console.log(`✅ Permitido: IP local/privada detectada: ${ip}`);
     return;
   }
 
   try {
+    // PRIMERO: Verificar si es un bot de Google (incluyendo Google Ads)
+    // Esto evita problemas de cloaking al permitir TODOS los bots de Google
     const isBot = await isGoogleBot(request);
     if (isBot) {
-      console.log(`✅ Permitido: Googlebot verificado para IP: ${ip} (${Date.now() - startTime}ms)`);
+      console.log(`✅ Permitido: Bot de Google verificado para IP: ${ip} (${Date.now() - startTime}ms)`);
       return;
     }
 
+    // SEGUNDO: Solo aplicar geo-restricción y VPN detection a USUARIOS REALES
+    console.log(`👤 Usuario real detectado, aplicando verificaciones de seguridad...`);
+    
     const vpnGeoCheck = await checkVPNAndGeo(ip);
     
-    // Verificar si está fuera de Estados Unidos
+    // Verificar si está fuera de Estados Unidos (solo usuarios reales)
     if (vpnGeoCheck.isOutsideUS) {
       const details = vpnGeoCheck.details;
-      console.log(`🌍 Acceso denegado para IP: ${ip}. País: ${details?.country} (${details?.isocode}). Solo se permite acceso desde Estados Unidos.`);
+      console.log(`🌍 Acceso denegado para usuario real IP: ${ip}. País: ${details?.country} (${details?.isocode}). Solo se permite acceso desde Estados Unidos.`);
       
       return new Response("Acceso denegado: Este servicio solo está disponible para usuarios en Estados Unidos.", {
         status: 403,
@@ -215,10 +238,10 @@ export default async function middleware(request) {
       });
     }
     
-    // Verificar VPN/Proxy
+    // Verificar VPN/Proxy (solo usuarios reales)
     if (vpnGeoCheck.isVPN) {
       const details = vpnGeoCheck.details;
-      console.log(`🚫 Acceso denegado para IP: ${ip}. Detalles VPN/Proxy:`, details);
+      console.log(`🚫 Acceso denegado para usuario real IP: ${ip}. Detalles VPN/Proxy:`, details);
       
       return new Response("Acceso denegado: Se ha detectado el uso de un VPN o proxy.", {
         status: 403,
@@ -231,7 +254,7 @@ export default async function middleware(request) {
       });
     }
 
-    console.log(`✅ Acceso permitido para IP: ${ip} (${Date.now() - startTime}ms)`);
+    console.log(`✅ Acceso permitido para usuario real IP: ${ip} (${Date.now() - startTime}ms)`);
     return;
 
   } catch (error) {
