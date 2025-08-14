@@ -1,6 +1,3 @@
-// middleware.js
-// Edge Function compatible middleware
-
 export const config = {
   runtime: 'edge',
   matcher: [
