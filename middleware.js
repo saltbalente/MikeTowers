@@ -4,7 +4,7 @@
 export const config = {
   runtime: 'edge',
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api).*)',
   ],
 };
 
@@ -162,7 +162,7 @@ async function checkVPN(ip) {
   }
 }
 
-export async function middleware(request) {
+export default async function middleware(request) {
   console.log('🔍 Middleware ejecutándose para:', request.url);
   const startTime = Date.now();
   
