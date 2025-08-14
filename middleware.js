@@ -4,7 +4,7 @@
 export const config = {
   runtime: 'edge',
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)",
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
 
@@ -163,9 +163,11 @@ async function checkVPN(ip) {
 }
 
 export async function middleware(request) {
+  console.log('🔍 Middleware ejecutándose para:', request.url);
   const startTime = Date.now();
   
   const ip = getClientIP(request);
+  console.log('📍 IP detectada:', ip);
 
   if (!ip) {
     console.warn("No se pudo obtener la IP del usuario. Acceso denegado por seguridad.");
